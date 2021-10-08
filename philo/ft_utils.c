@@ -6,7 +6,7 @@
 /*   By: gasselin <gasselin@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/31 10:40:10 by gasselin          #+#    #+#             */
-/*   Updated: 2021/09/21 15:20:08 by gasselin         ###   ########.fr       */
+/*   Updated: 2021/10/08 13:34:07 by gasselin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,20 +49,26 @@ void	print_changes(t_philo *philo, char *str)
 {
 	long int	timestamp;
 
-	timestamp = get_time() - philo->params->start_time;
-	printf("%ld %d %s\n", timestamp, philo->id, str);
+	pthread_mutex_lock(&philo->params->mutex);
+	if (philo->params->gameover == 0)
+	{
+		timestamp = get_time() - philo->params->start_time;
+		printf("%ld %d %s\n", timestamp, philo->id, str);
+	}
+	pthread_mutex_unlock(&philo->params->mutex);
 }
 
 void	free_all(t_philo *ph)
 {
 	int	i;
 
-	i = 0;
-	pthread_mutex_destroy(ph[0].params->mutex);
-	free (ph[0].params->mutex);
-	while (i < ph->params->nb_philo)
-		pthread_mutex_destroy(&ph[0].params->fork_mutex[i++]);
-	free (ph[0].params->fork_mutex);
-	free (ph[0].params->forks);
+	i = -1;
+	pthread_mutex_destroy(&ph->params->mutex);
+	pthread_mutex_destroy(&ph->params->mutex_die);
+	while (++i < ph->params->nb_philo)
+		pthread_mutex_destroy(&ph->params->fork_mutex[i]);
+	free (ph->params->fork_mutex);
+	free (ph->params->queue);
+	free (ph->params);
 	free (ph);
 }

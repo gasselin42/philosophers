@@ -6,7 +6,7 @@
 /*   By: gasselin <gasselin@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/31 10:02:58 by gasselin          #+#    #+#             */
-/*   Updated: 2021/09/23 14:53:18 by gasselin         ###   ########.fr       */
+/*   Updated: 2021/10/08 12:40:23 by gasselin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,6 @@
 # include <unistd.h>
 # include <sys/time.h>
 
-# define RD		"\033[0;31m"
-# define NC		"\033[0m"
-
 typedef struct s_params
 {
 	int				nb_philo;
@@ -32,20 +29,21 @@ typedef struct s_params
 	int				must_eat_count;
 	long int		start_time;
 	int				gameover;
-	id_t			gameover_id;
-	pthread_mutex_t	*mutex;
+	int				gameover_id;
+	pthread_mutex_t	mutex;
+	pthread_mutex_t	mutex_die;
 	pthread_mutex_t	*fork_mutex;
-	int				*forks;
+	int				*queue;
 }		t_params;
 
 typedef struct s_philo
 {
-	long int		last_meal;
-	long int		last_sleep;
-	int				eat_count;
-	int				state;
-	int				id;
-	t_params		*params;
+	long int	last_meal;
+	long int	last_sleep;
+	int			state;
+	int			id;
+	int			eat_count;
+	t_params	*params;
 }					t_philo;
 
 int			ft_atoi(char *s);
@@ -53,5 +51,12 @@ long int	get_time(void);
 void		*routine(void *philo);
 void		print_changes(t_philo *philo, char *str);
 void		free_all(t_philo *ph);
+t_philo		*init_philos(int argc, char **argv);
+void		init_threads(t_philo *philo);
+int			*init_queue(int nb_philos);
+void		update_queue(t_philo *ph, t_params *params);
+int			check_eat_count(t_params *params);
+void		unlock_forks(t_params *params);
+void		ft_ending(t_philo *ph, t_params *params);
 
 #endif

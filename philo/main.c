@@ -6,48 +6,55 @@
 /*   By: gasselin <gasselin@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/31 10:02:41 by gasselin          #+#    #+#             */
-/*   Updated: 2021/09/23 14:53:46 by gasselin         ###   ########.fr       */
+/*   Updated: 2021/10/08 12:29:19 by gasselin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-t_philo	*init_philos(int argc, char **argv, t_params params)
+void	unlock_forks(t_params *params)
 {
-	int		i;
-	t_philo	*philo;
+	int	i;
 
-	i = 0;
-	philo = (t_philo *)malloc(sizeof(t_philo) * params.nb_philo);
-	while (i < params.nb_philo)
-	{
-		philo[i].eat_count = 0;
-		philo[i].last_meal = 0;
-		philo[i].last_sleep = 0;
-		philo[i].id = i + 1;
-		philo[i].state = 't';
-		philo[i].params = &params;
-		i++;
-	}
-	return (philo);
+	i = -1;
+	while (++i < params->nb_philo)
+		pthread_mutex_unlock(&params->fork_mutex[i]);
 }
 
-void	init_threads(t_philo *philo)
+int	*init_queue(int nb_philos)
 {
-	pthread_t	*thread_philos;
-	int			i;
+	int	*queue;
+	int	i;
+	int	id;
 
 	i = 0;
-	thread_philos = malloc(sizeof(pthread_t) * philo[0].params->nb_philo);
-	while (i < philo[0].params->nb_philo)
+	id = 1;
+	queue = malloc(sizeof(int) * nb_philos);
+	while (id <= nb_philos)
 	{
-		pthread_create(&thread_philos[i], NULL, &routine, &philo[i]);
+		queue[i++] = id;
+		id += 2;
+	}
+	id = 2;
+	while (id <= nb_philos)
+	{
+		queue[i++] = id;
+		id += 2;
+	}
+	return (queue);
+}
+
+void	update_queue(t_philo *ph, t_params *params)
+{
+	int	i;
+
+	i = 0;
+	while (i < params->nb_philo - 1)
+	{
+		params->queue[i] = params->queue[i + 1];
 		i++;
 	}
-	i = 0;
-	while (i < philo[0].params->nb_philo)
-		pthread_join(thread_philos[i++], NULL);
-	free (thread_philos);
+	params->queue[i] = ph->id;
 }
 
 int	check_args(int argc, char **argv)
@@ -65,46 +72,15 @@ int	check_args(int argc, char **argv)
 	return (0);
 }
 
-t_params	init_params(int argc, char **argv)
-{
-	t_params	params;
-	int			i;
-
-	i = 0;
-	params.nb_philo = ft_atoi(argv[1]);
-	params.time_to_die = ft_atoi(argv[2]);
-	params.time_to_eat = ft_atoi(argv[3]);
-	params.time_to_sleep = ft_atoi(argv[4]);
-	params.must_eat_count = 0;
-	if (argc == 6)
-		params.must_eat_count = ft_atoi(argv[5]);
-	params.start_time = get_time();
-	params.gameover = 0;
-	params.mutex = malloc(sizeof(pthread_mutex_t));
-	pthread_mutex_init(&params.mutex[0], NULL);
-	params.fork_mutex = malloc(sizeof(pthread_mutex_t) * params.nb_philo);
-	params.forks = malloc(sizeof(int) * params.nb_philo);
-	params.gameover_id = 0;
-	while (i < params.nb_philo)
-	{
-		pthread_mutex_init(&params.fork_mutex[i], NULL);
-		params.forks[i] = 1;
-		i++;
-	}
-	return (params);
-}
-
 int	main(int argc, char **argv)
 {
 	t_philo		*philo;
-	t_params	params;
 
 	if (argc != 5 && argc != 6)
 		return (printf("Error: # of args is %d, should be 5 or 6\n", argc));
 	if (check_args(argc, argv))
 		return (EXIT_FAILURE);
-	params = init_params(argc, argv);
-	philo = init_philos(argc, argv, params);
+	philo = init_philos(argc, argv);
 	init_threads(philo);
 	free_all(philo);
 	return (0);

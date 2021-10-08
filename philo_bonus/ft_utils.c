@@ -6,7 +6,7 @@
 /*   By: gasselin <gasselin@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/22 13:59:07 by gasselin          #+#    #+#             */
-/*   Updated: 2021/09/23 11:25:40 by gasselin         ###   ########.fr       */
+/*   Updated: 2021/10/07 14:54:47 by gasselin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,23 +49,25 @@ void	print_changes(t_philo *philo, char *str)
 {
 	long int	timestamp;
 
-	timestamp = get_time() - philo->params->start_time;
-	printf("%ld %d %s\n", timestamp, philo->id, str);
+	sem_wait(philo->params->sem_write);
+	if (philo->params->gameover == 0)
+	{
+		timestamp = get_time() - philo->params->start_time;
+		printf("%ld %d %s\n", timestamp, philo->id, str);
+	}
+	sem_post(philo->params->sem_write);
 }
 
 void	free_all(t_philo *ph)
 {
-	int	i;
-
-	i = 0;
-	sem_close(ph[0].params->semaphore);
-	free (ph[0].params->pid);
-	free (ph);
-}
-
-void	error_pid(t_philo *ph)
-{
-	free_all(ph);
-	printf("%s\n", "fork error");
-	exit (EXIT_FAILURE);
+	sem_close(ph->params->sem_forks);
+	sem_close(ph->params->sem_write);
+	sem_close(ph->params->sem_eat);
+	sem_close(ph->params->sem_die);
+	sem_unlink("/pForks");
+	sem_unlink("/pWrite");
+	sem_unlink("/pEat");
+	sem_unlink("/pDie");
+	free(ph->params);
+	free(ph);
 }
