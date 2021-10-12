@@ -6,7 +6,7 @@
 /*   By: gasselin <gasselin@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/31 10:02:58 by gasselin          #+#    #+#             */
-/*   Updated: 2021/10/08 12:40:23 by gasselin         ###   ########.fr       */
+/*   Updated: 2021/10/12 10:42:52 by gasselin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ typedef struct s_params
 	pthread_mutex_t	mutex_die;
 	pthread_mutex_t	*fork_mutex;
 	int				*queue;
+	int				forks;
 }		t_params;
 
 typedef struct s_philo
@@ -43,6 +44,7 @@ typedef struct s_philo
 	int			state;
 	int			id;
 	int			eat_count;
+	int			eating;
 	t_params	*params;
 }					t_philo;
 

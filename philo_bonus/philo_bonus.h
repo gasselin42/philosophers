@@ -6,7 +6,7 @@
 /*   By: gasselin <gasselin@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/22 13:34:29 by gasselin          #+#    #+#             */
-/*   Updated: 2021/10/08 12:49:00 by gasselin         ###   ########.fr       */
+/*   Updated: 2021/10/12 10:49:34 by gasselin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ typedef struct s_philo
 	long int	last_sleep;
 	int			state;
 	int			id;
+	int			eating;
 	pid_t		pid;
 	t_params	*params;
 }					t_philo;

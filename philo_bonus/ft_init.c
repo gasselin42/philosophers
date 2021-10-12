@@ -6,7 +6,7 @@
 /*   By: gasselin <gasselin@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 14:15:17 by gasselin          #+#    #+#             */
-/*   Updated: 2021/10/08 12:50:08 by gasselin         ###   ########.fr       */
+/*   Updated: 2021/10/12 10:50:03 by gasselin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ t_philo	*init_philos(int argc, char **argv)
 		philo[i].last_sleep = 0;
 		philo[i].id = i + 1;
 		philo[i].state = 't';
+		philo[i].eat_count = 0;
 		philo[i].params = params;
 		i++;
 	}

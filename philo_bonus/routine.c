@@ -6,7 +6,7 @@
 /*   By: gasselin <gasselin@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/22 14:21:07 by gasselin          #+#    #+#             */
-/*   Updated: 2021/10/08 12:51:05 by gasselin         ###   ########.fr       */
+/*   Updated: 2021/10/12 11:15:15 by gasselin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void	ft_eat(t_philo *ph, t_params *params)
 		sem_wait(params->sem_forks);
 		sem_wait(params->sem_forks);
 		sem_wait(params->sem_eating);
+		ph->eating = 1;
 		print_changes(ph, "has taken a fork");
 		print_changes(ph, "has taken a fork");
 		print_changes(ph, "is eating");
@@ -36,6 +37,7 @@ void	ft_sleep(t_philo *ph, t_params *params)
 	{
 		sem_post(params->sem_forks);
 		sem_post(params->sem_forks);
+		ph->eating = 0;
 		ph->state = 's';
 		print_changes(ph, "is sleeping");
 		ph->last_sleep = get_time();
@@ -65,7 +67,9 @@ void	*ft_die(void *philo)
 		if (ph->params->gameover == 0)
 		{
 			time = get_time();
-			if (time - ph->last_meal >= pm->time_to_die)
+			if ((pm->nb_philo == 1 && time == pm->start_time
+					+ pm->time_to_die) || (!ph->eating && time
+					- ph->last_meal > pm->time_to_die))
 			{
 				sem_wait(pm->sem_write);
 				printf("%ld %d %s\n", time - pm->start_time, ph->id, "died");

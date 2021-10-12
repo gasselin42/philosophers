@@ -6,7 +6,7 @@
 /*   By: gasselin <gasselin@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 15:00:49 by gasselin          #+#    #+#             */
-/*   Updated: 2021/10/08 13:11:10 by gasselin         ###   ########.fr       */
+/*   Updated: 2021/10/12 10:43:19 by gasselin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,17 @@
 
 void	ft_ending(t_philo *ph, t_params *params)
 {
-	pthread_mutex_lock(&params->mutex);
-	if (params->nb_philo > 1)
-		usleep(1000);
-	params->gameover = 1;
-	params->gameover_id = ph->id;
-	printf("%ld %d %s\n", get_time() - params->start_time, ph->id, "died");
-	unlock_forks(params);
-	pthread_mutex_unlock(&params->mutex);
+	if (params->gameover == 0)
+	{
+		pthread_mutex_lock(&params->mutex);
+		if (params->nb_philo > 1)
+			usleep(1000);
+		params->gameover = 1;
+		params->gameover_id = ph->id;
+		printf("%ld %d %s\n", get_time() - params->start_time, ph->id, "died");
+		unlock_forks(params);
+		pthread_mutex_unlock(&params->mutex);
+	}
 }
 
 t_params	*init_params(int argc, char **argv)
@@ -45,6 +48,7 @@ t_params	*init_params(int argc, char **argv)
 	params->fork_mutex = malloc(sizeof(pthread_mutex_t) * params->nb_philo);
 	params->queue = init_queue(params->nb_philo);
 	params->gameover_id = 0;
+	params->forks = params->nb_philo;
 	while (++i < params->nb_philo)
 		pthread_mutex_init(&params->fork_mutex[i], NULL);
 	return (params);
@@ -66,6 +70,7 @@ t_philo	*init_philos(int argc, char **argv)
 		philo[i].id = i + 1;
 		philo[i].state = 't';
 		philo[i].eat_count = 0;
+		philo[i].eating = 0;
 		philo[i].params = params;
 	}
 	return (philo);
