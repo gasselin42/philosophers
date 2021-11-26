@@ -6,7 +6,7 @@
 /*   By: gasselin <gasselin@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 15:00:49 by gasselin          #+#    #+#             */
-/*   Updated: 2021/10/12 10:43:19 by gasselin         ###   ########.fr       */
+/*   Updated: 2021/10/12 17:15:36 by gasselin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ void	ft_ending(t_philo *ph, t_params *params)
 		printf("%ld %d %s\n", get_time() - params->start_time, ph->id, "died");
 		unlock_forks(params);
 		pthread_mutex_unlock(&params->mutex);
+		pthread_mutex_unlock(&params->eating);
 	}
 }
 
@@ -44,6 +45,7 @@ t_params	*init_params(int argc, char **argv)
 	params->start_time = get_time();
 	params->gameover = 0;
 	pthread_mutex_init(&params->mutex, NULL);
+	pthread_mutex_init(&params->eating, NULL);
 	pthread_mutex_init(&params->mutex_die, NULL);
 	params->fork_mutex = malloc(sizeof(pthread_mutex_t) * params->nb_philo);
 	params->queue = init_queue(params->nb_philo);

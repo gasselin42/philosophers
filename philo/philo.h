@@ -6,7 +6,7 @@
 /*   By: gasselin <gasselin@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/31 10:02:58 by gasselin          #+#    #+#             */
-/*   Updated: 2021/10/12 10:42:52 by gasselin         ###   ########.fr       */
+/*   Updated: 2021/10/12 17:08:44 by gasselin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ typedef struct s_params
 	int				gameover;
 	int				gameover_id;
 	pthread_mutex_t	mutex;
+	pthread_mutex_t	eating;
 	pthread_mutex_t	mutex_die;
 	pthread_mutex_t	*fork_mutex;
 	int				*queue;

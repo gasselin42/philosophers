@@ -6,7 +6,7 @@
 /*   By: gasselin <gasselin@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/31 10:40:10 by gasselin          #+#    #+#             */
-/*   Updated: 2021/10/08 13:34:07 by gasselin         ###   ########.fr       */
+/*   Updated: 2021/10/12 18:29:41 by gasselin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ void	free_all(t_philo *ph)
 	i = -1;
 	pthread_mutex_destroy(&ph->params->mutex);
 	pthread_mutex_destroy(&ph->params->mutex_die);
+	pthread_mutex_destroy(&ph->params->eating);
 	while (++i < ph->params->nb_philo)
 		pthread_mutex_destroy(&ph->params->fork_mutex[i]);
 	free (ph->params->fork_mutex);

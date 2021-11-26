@@ -6,7 +6,7 @@
 /*   By: gasselin <gasselin@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/22 13:59:07 by gasselin          #+#    #+#             */
-/*   Updated: 2021/10/07 14:54:47 by gasselin         ###   ########.fr       */
+/*   Updated: 2021/10/12 11:41:05 by gasselin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,10 +64,12 @@ void	free_all(t_philo *ph)
 	sem_close(ph->params->sem_write);
 	sem_close(ph->params->sem_eat);
 	sem_close(ph->params->sem_die);
+	sem_close(ph->params->sem_eating);
 	sem_unlink("/pForks");
 	sem_unlink("/pWrite");
 	sem_unlink("/pEat");
 	sem_unlink("/pDie");
+	sem_unlink("/pEating");
 	free(ph->params);
 	free(ph);
 }

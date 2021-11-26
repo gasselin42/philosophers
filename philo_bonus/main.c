@@ -6,7 +6,7 @@
 /*   By: gasselin <gasselin@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/22 14:00:41 by gasselin          #+#    #+#             */
-/*   Updated: 2021/10/07 14:39:47 by gasselin         ###   ########.fr       */
+/*   Updated: 2021/10/12 13:49:05 by gasselin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@ void	*eat_check(void *philo)
 	while (eat_count < params->nb_philo * params->must_eat_count)
 	{
 		sem_wait(params->sem_eat);
+		if (params->gameover)
+			return (NULL);
 		eat_count++;
 	}
 	sem_post(params->sem_die);
@@ -62,6 +64,8 @@ int	main(int argc, char **argv)
 	init_forks(philo);
 	sem_wait(philo->params->sem_die);
 	i = -1;
+	philo->params->gameover = 1;
+	sem_post(philo->params->sem_eat);
 	while (++i < philo->params->nb_philo)
 		kill(philo[i].pid, SIGKILL);
 	if (argv[5])

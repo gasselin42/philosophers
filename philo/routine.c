@@ -6,7 +6,7 @@
 /*   By: gasselin <gasselin@student.42quebec.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/03 10:20:05 by gasselin          #+#    #+#             */
-/*   Updated: 2021/10/12 10:54:10 by gasselin         ###   ########.fr       */
+/*   Updated: 2021/11/18 11:47:41 by gasselin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,19 +34,21 @@ void	ft_eat(t_philo *ph, t_params *params)
 	{
 		if (ph->id == params->queue[0] && params->forks >= 2)
 		{
+			pthread_mutex_lock(&params->eating);
 			pthread_mutex_lock(&params->fork_mutex[ph->id - 1]);
 			pthread_mutex_lock(&params->fork_mutex[ph->id % params->nb_philo]);
 			ph->state = 'e';
-			params->forks -= 2;
 			ph->eating = 1;
 			if (params->gameover)
 				return ;
 			print_changes(ph, "has taken a fork");
 			print_changes(ph, "has taken a fork");
 			print_changes(ph, "is eating");
+			params->forks -= 2;
 			(ph->eat_count)++;
 			ph->last_meal = get_time();
 			update_queue(ph, params);
+			pthread_mutex_unlock(&params->eating);
 		}
 	}
 }
@@ -55,9 +57,11 @@ void	ft_sleep(t_philo *ph, t_params *params)
 {
 	if (ph->state == 'e' && get_time() - ph->last_meal >= params->time_to_eat)
 	{
+		pthread_mutex_lock(&params->mutex);
+		params->forks += 2;
+		pthread_mutex_unlock(&params->mutex);
 		pthread_mutex_unlock(&params->fork_mutex[ph->id - 1]);
 		pthread_mutex_unlock(&params->fork_mutex[ph->id % params->nb_philo]);
-		params->forks += 2;
 		ph->eating = 0;
 		ph->state = 's';
 		print_changes(ph, "is sleeping");
